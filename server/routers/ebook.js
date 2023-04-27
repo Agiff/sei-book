@@ -3,6 +3,7 @@ const EbookController = require('../controllers/EbookController');
 const multer = require("multer");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
+const authorization = require('../middlewares/authorization');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,6 +18,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), EbookController.upload);
-router.get("/download", EbookController.download);
+router.get("/download/:id", authorization, EbookController.download);
 
 module.exports = router;

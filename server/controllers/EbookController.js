@@ -23,10 +23,14 @@ class EbookController {
 
   static async download(req, res, next) {
     try {
-      const filePath = "public/uploads/8af40ba1-e679-4cc0-869b-727feffe2552.pdf";
-      const stream = fs.createReadStream(filePath);
-      res.setHeader("Content-disposition", "attachment; filename=dummy-ebook.pdf");
-      res.setHeader("Content-type", "application/pdf");
+      const { id } = req.params;
+
+      const currentEbook = await Ebook.findByPk(id);
+      if (!currentEbook) throw { name: 'NotFound' };
+
+      const stream = fs.createReadStream(currentEbook.path);
+      res.setHeader('Content-disposition', `attachment; filename=${currentEbook.originalName.split(' ').join('_')}`);
+      res.setHeader('Content-type', 'application/pdf');
       stream.pipe(res);
     } catch (error) {
       next(error);
