@@ -1,11 +1,21 @@
 const fs = require('fs');
+const { Ebook } = require('../models');
 
 class EbookController {
   static async upload(req, res, next) {
     try {
-      console.log(req.file);
-      const filePath = req.file.path;
-      res.send("File uploaded successfully");
+      const file = req.file;
+      if (!file) throw { name: 'NoFile' };
+
+      const ebook = await Ebook.create({
+        originalName: file.originalname,
+        fileName: file.filename,
+        path: file.path,
+        size: file.size,
+        UserId: req.user.id
+      });
+
+      res.status(201).json({ message: `File ${ebook.originalName} uploaded successfully` })
     } catch (error) {
       next(error);
     }

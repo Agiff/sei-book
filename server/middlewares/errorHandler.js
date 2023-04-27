@@ -5,6 +5,10 @@ const errorHandler = (err, req, res, next) => {
     case 'EmailPasswordRequired':
       res.status(400).json({ message: 'Email and Password is required' });
       break;
+
+    case 'NoFile':
+      res.status(400).json({ message: 'Please select a file to upload' });
+      break;
     
     case 'EmailPasswordInvalid':
       res.status(401).json({ message: 'Email or Password is invalid' });
