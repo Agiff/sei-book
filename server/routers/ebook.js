@@ -17,6 +17,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), EbookController.upload);
-router.get("/download/", EbookController.download);
+router.get("/download", EbookController.download);
 
 module.exports = router;
