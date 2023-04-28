@@ -22,6 +22,17 @@ class UserController {
       next(error);
     }
   }
+
+  static async getUserDetail(req, res, next) {
+    try {
+      const currentUser = await User.findByPk(req.user.id);
+      if (!currentUser) throw { name: 'NotFound' };
+
+      res.status(200).json(currentUser);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = UserController;
