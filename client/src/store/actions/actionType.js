@@ -1,0 +1,1 @@
+export const FETCH_CURRENT_USER = 'users/detail';
