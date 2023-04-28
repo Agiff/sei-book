@@ -36,6 +36,15 @@ class EbookController {
       next(error);
     }
   }
+
+  static async getEbook(req, res, next) {
+    try {
+      const ebook = await Ebook.findAll({ where: { UserId: req.user.id } });
+      res.status(200).json(ebook);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = EbookController;
