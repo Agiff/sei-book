@@ -3,7 +3,7 @@ import router from './router';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: '#eee', minHeight: '100vh' }}>
       <RouterProvider router={router} />
     </div>
   );
