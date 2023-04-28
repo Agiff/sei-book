@@ -2,9 +2,15 @@ import React from 'react'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const CustomNavbar = () => {
+  const navigate = useNavigate();
+  const onLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  }
+
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -21,14 +27,6 @@ const CustomNavbar = () => {
               Home
             </NavLink>
             <NavLink
-              to="/login"
-              className={({ isActive, isPending }) =>
-                isPending ? "nav-link" : isActive ? "nav-link" : "nav-link"
-              }
-            >
-              Login
-            </NavLink>
-            <NavLink
               to="/ebook"
               className={({ isActive, isPending }) =>
                 isPending ? "nav-link" : isActive ? "nav-link" : "nav-link"
@@ -37,6 +35,7 @@ const CustomNavbar = () => {
               E-Book
             </NavLink>
             <NavLink
+              onClick={onLogout}
               className={({ isActive, isPending }) =>
                 isPending ? "nav-link" : isActive ? "nav-link" : "nav-link"
               }
