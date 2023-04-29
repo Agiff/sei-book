@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCurrentUser } from '../store/actions/actionUser';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import UploadModal from '../components/UploadModal';
 
 const styles = {
   container: {
@@ -34,6 +35,7 @@ const styles = {
 };
 
 const HomePage = () => {
+  const [uploadModal, setUploadModal] = useState(false);
   const { user } = useSelector(state => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -52,12 +54,16 @@ const HomePage = () => {
             <Button variant="primary" type="button" className='me-3' onClick={() => navigate('/ebooks')}>
               E-Book
             </Button>
-            <Button variant="primary" type="button" onClick={() => navigate('/ebooks')}>
+            <Button variant="primary" type="button" onClick={() => setUploadModal(true)}>
               Upload
             </Button>
           </div>
         </div>
       </div>
+      <UploadModal
+        show={uploadModal}
+        onHide={() => setUploadModal(false)}
+      />
     </div>
   )
 }
