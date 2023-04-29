@@ -1,8 +1,30 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import axios from 'axios';
+import { baseUrl } from '../config';
 
 const EbookCard = ({ book }) => {
+  const handleDownload = async () => {
+    try {
+      console.log(book.id);
+      const res = await axios.get(`${baseUrl}/ebooks/download/${book.id}`, {
+        responseType: 'blob',
+        headers: {
+          access_token: localStorage.access_token
+        }
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', book.originalName.split(' ').join('_'));
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className='pe-3'>
       <Card style={{ width: '10rem' }}>
@@ -26,7 +48,7 @@ const EbookCard = ({ book }) => {
             <Button variant="primary" className='px-3'>
               Open
             </Button>
-            <Button variant="primary">
+            <Button variant="primary" onClick={handleDownload}>
               <i className="bi bi-download"></i>
             </Button>
           </div>
