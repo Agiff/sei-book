@@ -27,7 +27,7 @@ const CustomNavbar = () => {
               Home
             </NavLink>
             <NavLink
-              to="/ebook"
+              to="/ebooks"
               className={({ isActive, isPending }) =>
                 isPending ? "nav-link" : isActive ? "nav-link" : "nav-link"
               }
