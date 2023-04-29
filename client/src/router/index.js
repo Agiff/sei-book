@@ -1,7 +1,8 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { Outlet, createBrowserRouter, redirect } from "react-router-dom";
 import HomePage from '../pages/HomePage';
 import CustomNavbar from "../components/CustomNavbar";
 import LoginPage from "../pages/LoginPage";
+import EbookPage from "../pages/EbookPage";
 
 const router = createBrowserRouter([
   {
@@ -12,8 +13,18 @@ const router = createBrowserRouter([
     },
     element: <div>
       <CustomNavbar />
-      <HomePage />
-    </div>
+      <Outlet />
+    </div>,
+    children: [
+      {
+        path: "/",
+        element: <HomePage />
+      },
+      {
+        path: "/ebooks",
+        element: <EbookPage />
+      }
+    ]
   },
   {
     path: "/login",
