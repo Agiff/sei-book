@@ -2,7 +2,7 @@ import { FETCH_CURRENT_USER } from '../actions/actionType';
 
 const initialState = { user: {} }
 
-function itemReducer(state = initialState, action) {
+function userReducer(state = initialState, action) {
   switch (action.type) {
     case FETCH_CURRENT_USER:
       return {
@@ -14,4 +14,4 @@ function itemReducer(state = initialState, action) {
   }
 }
 
-export default itemReducer;
+export default userReducer;
