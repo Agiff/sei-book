@@ -31,7 +31,32 @@ const EbookPage = () => {
       const filePromise = Promise.resolve(file.arrayBuffer());
       const viewSDKClient = new ViewSDKClient();
       await viewSDKClient.ready();
-      await viewSDKClient.previewFileUsingFilePromise('pdf-div', filePromise, book.originalName);
+      const adobeViewer = await viewSDKClient.previewFileUsingFilePromise('pdf-div', filePromise, book.originalName, book.fileName, {
+        enableAnnotationAPIs: true,
+      });
+      const annotationManager = await adobeViewer.getAnnotationManager();
+
+      annotationManager.registerEventListener(
+        event => {
+          if (event.type === "ANNOTATION_ADDED") {
+            console.log("New annotation created:", event.data);
+          } else if (event.type === "ANNOTATIONS_LOADED") {
+            console.log("Annotations loaded:", event.data);
+          } else if (event.type === "ANNOTATION_UPDATED") {
+            console.log("Annotation updated:", event.data);
+          } else if (event.type === "ANNOTATION_DELETED") {
+            console.log("Annotation deleted:", event.data);
+          }
+        },
+        {
+          listenOn: [
+            "ANNOTATIONS_LOADED",
+            "ANNOTATION_ADDED",
+            "ANNOTATION_UPDATED",
+            "ANNOTATION_DELETED"
+          ]
+        }
+      );
     } catch (error) {
       console.log(error);
     }
