@@ -4,17 +4,17 @@ import Card from 'react-bootstrap/Card';
 import axios from 'axios';
 import { baseUrl } from '../config';
 
-const EbookCard = ({ book }) => {
+const EbookCard = ({ book, handleOpenPDF, setPdfModal }) => {
   const handleDownload = async () => {
     try {
       console.log(book.id);
-      const res = await axios.get(`${baseUrl}/ebooks/download/${book.id}`, {
+      const { data } = await axios.get(`${baseUrl}/ebooks/download/${book.id}`, {
         responseType: 'blob',
         headers: {
           access_token: localStorage.access_token
         }
       });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const url = window.URL.createObjectURL(new Blob([data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', book.originalName.split(' ').join('_'));
@@ -24,6 +24,11 @@ const EbookCard = ({ book }) => {
       console.log(error);
     }
   };
+
+  const handleOpenClick = () => {
+    handleOpenPDF(book);
+    setPdfModal(true);
+  }
 
   return (
     <div className='pe-3'>
@@ -45,7 +50,7 @@ const EbookCard = ({ book }) => {
             {book?.originalName}
           </Card.Text>
           <div className='d-flex justify-content-between'>
-            <Button variant="primary" className='px-3'>
+            <Button variant="primary" className='px-3' onClick={handleOpenClick}>
               Open
             </Button>
             <Button variant="primary" onClick={handleDownload}>

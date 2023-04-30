@@ -4,15 +4,38 @@ import { fetchEbooks } from '../store/actions/actionEbook';
 import EbookCard from '../components/EbookCard';
 import UploadModal from '../components/UploadModal';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+import { baseUrl } from '../config';
+import ViewSDKClient from '../components/ViewSDKClient';
+import PdfPreviewModal from '../components/PdfPreviewModal';
 
 const EbookPage = () => {
   const [uploadModal, setUploadModal] = useState(false);
+  const [pdfModal, setPdfModal] = useState(false);
   const dispatch = useDispatch();
   const { ebooks } = useSelector(state => state.ebooks);
 
   useEffect(() => {
     dispatch(fetchEbooks());
   }, [])
+
+  const handleOpenPDF = async (book) => {
+    try {
+      const { data } = await axios.get(`${baseUrl}/ebooks/download/${book.id}`, {
+        responseType: 'blob',
+        headers: {
+          access_token: localStorage.access_token
+        }
+      });
+      const file = new Blob([data]);
+      const filePromise = Promise.resolve(file.arrayBuffer());
+      const viewSDKClient = new ViewSDKClient();
+      await viewSDKClient.ready();
+      await viewSDKClient.previewFileUsingFilePromise('pdf-div', filePromise, book.originalName);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className='container mt-3'>
@@ -25,13 +48,17 @@ const EbookPage = () => {
       <div className='d-flex mt-3'>
         {
           ebooks?.map(book => (
-            <EbookCard key={book.id} book={book} />
+            <EbookCard key={book.id} book={book} handleOpenPDF={handleOpenPDF} setPdfModal={setPdfModal} />
           ))
         }
       </div>
       <UploadModal
         show={uploadModal}
         onHide={() => setUploadModal(false)}
+      />
+      <PdfPreviewModal
+        show={pdfModal}
+        onHide={() => setPdfModal(false)}
       />
     </div>
   )
