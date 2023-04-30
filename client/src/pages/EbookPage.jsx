@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchEbooks } from '../store/actions/actionEbook';
+import { fetchEbookDetail, fetchEbooks } from '../store/actions/actionEbook';
 import EbookCard from '../components/EbookCard';
 import UploadModal from '../components/UploadModal';
 import Button from 'react-bootstrap/Button';
@@ -13,7 +13,7 @@ const EbookPage = () => {
   const [uploadModal, setUploadModal] = useState(false);
   const [pdfModal, setPdfModal] = useState(false);
   const dispatch = useDispatch();
-  const { ebooks } = useSelector(state => state.ebooks);
+  const { ebooks, ebookDetail } = useSelector(state => state.ebooks);
 
   useEffect(() => {
     dispatch(fetchEbooks());
@@ -27,6 +27,7 @@ const EbookPage = () => {
           access_token: localStorage.access_token
         }
       });
+      dispatch(fetchEbookDetail(book.id));
       const file = new Blob([data]);
       const filePromise = Promise.resolve(file.arrayBuffer());
       const viewSDKClient = new ViewSDKClient();
