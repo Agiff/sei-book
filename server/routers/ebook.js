@@ -19,6 +19,7 @@ const upload = multer({ storage });
 
 router.get("/", EbookController.getEbook);
 router.post("/upload", upload.single("file"), EbookController.upload);
+router.get("/:id", EbookController.getEbookDetail);
 router.get("/download/:id", authorization, EbookController.download);
 
 module.exports = router;

@@ -3,32 +3,28 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Ebook extends Model {
+  class Annotation extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Ebook.belongsTo(models.User);
-      Ebook.hasOne(models.Annotation);
+      Annotation.belongsTo(models.Ebook);
     }
   }
-  Ebook.init({
+  Annotation.init({
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    originalName: DataTypes.STRING,
-    fileName: DataTypes.STRING,
-    path: DataTypes.STRING,
-    size: DataTypes.INTEGER,
-    UserId: DataTypes.INTEGER
+    data: DataTypes.TEXT,
+    EbookId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Ebook',
+    modelName: 'Annotation',
   });
-  return Ebook;
+  return Annotation;
 };

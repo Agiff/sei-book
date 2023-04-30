@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Ebook } = require('../models');
+const { Ebook, Annotation } = require('../models');
 
 class EbookController {
   static async upload(req, res, next) {
@@ -40,6 +40,19 @@ class EbookController {
   static async getEbook(req, res, next) {
     try {
       const ebook = await Ebook.findAll({ where: { UserId: req.user.id } });
+      res.status(200).json(ebook);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getEbookDetail(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const ebook = await Ebook.findByPk(id, {
+        include: [Annotation]
+      });
       res.status(200).json(ebook);
     } catch (error) {
       next(error);
