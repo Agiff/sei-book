@@ -10,14 +10,34 @@ import ViewSDKClient from '../components/ViewSDKClient';
 import PdfPreviewModal from '../components/PdfPreviewModal';
 
 const EbookPage = () => {
+  const [annotationManagerState, setAnnotationManagerState] = useState(null);
+  const [ebookId, setEbookId] = useState(null);
   const [uploadModal, setUploadModal] = useState(false);
   const [pdfModal, setPdfModal] = useState(false);
   const dispatch = useDispatch();
-  const { ebooks, ebookDetail } = useSelector(state => state.ebooks);
+  const { ebooks } = useSelector(state => state.ebooks);
 
   useEffect(() => {
     dispatch(fetchEbooks());
   }, [])
+
+  const saveAnnotation = async () => {
+    try {
+      const result = await annotationManagerState.getAnnotations();
+      const annotations = {
+        data: JSON.stringify(result),
+        EbookId: ebookId
+      }
+      await axios.post(`${baseUrl}/annotations/`, annotations, {
+        headers: {
+          access_token: localStorage.access_token
+        }
+      });
+      setPdfModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleOpenPDF = async (book) => {
     try {
@@ -27,7 +47,6 @@ const EbookPage = () => {
           access_token: localStorage.access_token
         }
       });
-      dispatch(fetchEbookDetail(book.id));
       const file = new Blob([data]);
       const filePromise = Promise.resolve(file.arrayBuffer());
       const viewSDKClient = new ViewSDKClient();
@@ -36,28 +55,23 @@ const EbookPage = () => {
         enableAnnotationAPIs: true,
       });
       const annotationManager = await adobeViewer.getAnnotationManager();
+      setAnnotationManagerState(annotationManager);
+      setEbookId(book.id);
 
-      annotationManager.registerEventListener(
-        event => {
-          if (event.type === "ANNOTATION_ADDED") {
-            console.log("New annotation created:", event.data);
-          } else if (event.type === "ANNOTATIONS_LOADED") {
-            console.log("Annotations loaded:", event.data);
-          } else if (event.type === "ANNOTATION_UPDATED") {
-            console.log("Annotation updated:", event.data);
-          } else if (event.type === "ANNOTATION_DELETED") {
-            console.log("Annotation deleted:", event.data);
+      dispatch(fetchEbookDetail(book.id))
+        .then(ebook => {
+          if (ebook.Annotation) {
+            const annotations = JSON.parse(ebook.Annotation.data);
+            annotationManager.addAnnotations(annotations)
+              .then(() => {
+                console.log("Annotations added through API successfully");
+              })
+              .catch(error => {
+                console.log(error);
+              });
           }
-        },
-        {
-          listenOn: [
-            "ANNOTATIONS_LOADED",
-            "ANNOTATION_ADDED",
-            "ANNOTATION_UPDATED",
-            "ANNOTATION_DELETED"
-          ]
-        }
-      );
+        })
+  
     } catch (error) {
       console.log(error);
     }
@@ -85,6 +99,7 @@ const EbookPage = () => {
       <PdfPreviewModal
         show={pdfModal}
         onHide={() => setPdfModal(false)}
+        saveAnnotation={saveAnnotation}
       />
     </div>
   )
