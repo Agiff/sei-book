@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Ebook.belongsTo(models.User);
-      Ebook.hasMany(models.Annotation);
+      Ebook.hasOne(models.Annotation);
     }
   }
   Ebook.init({
