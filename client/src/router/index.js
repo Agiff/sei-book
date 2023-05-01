@@ -1,10 +1,10 @@
-import { Outlet, createBrowserRouter, redirect } from "react-router-dom";
+import { Outlet, createHashRouter, redirect } from "react-router-dom";
 import HomePage from '../pages/HomePage';
 import CustomNavbar from "../components/CustomNavbar";
 import LoginPage from "../pages/LoginPage";
 import EbookPage from "../pages/EbookPage";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     loader: () => {
